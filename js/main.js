@@ -1,42 +1,61 @@
 'use strict';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof window.initPrimeGallery === 'function') window.initPrimeGallery();
-  if (typeof window.initPrimeFormat === 'function') window.initPrimeFormat();
+(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let userPaused = false;
+  const buttonState = () => {
+    const paused = userPaused || reduced.matches;
+    document.documentElement.classList.toggle('motion-paused', paused);
+    const button = document.getElementById('motion-toggle');
+    if (button) {
+      button.setAttribute('aria-pressed', String(paused));
+      button.disabled = reduced.matches;
+      button.querySelector('.motion-label').textContent = reduced.matches ? 'Animation off' : paused ? 'Resume animation' : 'Pause animation';
+      button.querySelector('.motion-icon').textContent = paused ? '▶' : 'Ⅱ';
+    }
+    window.dispatchEvent(new Event('prime:motion'));
+  };
+  window.PrimeMotion = { isPaused: () => userPaused || reduced.matches || document.hidden };
+  reduced.addEventListener('change', buttonState);
 
-  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if ('IntersectionObserver' in window && !motion.matches) {
-    document.documentElement.classList.add('motion-ready');
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
-      }
-    }, { threshold: .06, rootMargin: '0px 0px -15px 0px' });
-    document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
-    motion.addEventListener('change', event => {
-      if (event.matches) {
-        document.documentElement.classList.remove('motion-ready');
-        observer.disconnect();
-      }
+  document.addEventListener('DOMContentLoaded', () => {
+    buttonState();
+    document.getElementById('motion-toggle')?.addEventListener('click', () => {
+      userPaused = !userPaused;
+      buttonState();
     });
-  }
+    window.initPrimeGallery?.();
+    window.initPrimeFormat?.();
+    window.initPrimeCarousel?.();
 
-  const bar = document.getElementById('reading-progress');
-  let pending = false;
-  const renderProgress = () => {
-    pending = false;
-    const distance = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = distance > 0 ? Math.min(1, Math.max(0, window.scrollY / distance)) : 0;
-    if (bar) bar.style.transform = `scaleX(${progress})`;
-  };
-  const requestProgress = () => {
-    if (pending) return;
-    pending = true;
-    requestAnimationFrame(renderProgress);
-  };
-  window.addEventListener('scroll', requestProgress, { passive: true });
-  window.addEventListener('resize', requestProgress, { passive: true });
-  renderProgress();
-});
+    if ('IntersectionObserver' in window) {
+      const heroObserver = new IntersectionObserver(entries => {
+        document.documentElement.classList.toggle('hero-out-of-view', !entries[0].isIntersecting);
+      }, { threshold: 0 });
+      const hero = document.getElementById('hero-showcase');
+      if (hero) heroObserver.observe(hero);
+      if (!reduced.matches) {
+        document.documentElement.classList.add('motion-ready');
+        const observer = new IntersectionObserver(entries => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        }, { threshold: .06 });
+        document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+        reduced.addEventListener('change', event => {
+          if (event.matches) {
+            document.documentElement.classList.remove('motion-ready');
+            observer.disconnect();
+          }
+        });
+      }
+    }
+    document.addEventListener('visibilitychange', () => {
+      document.documentElement.classList.toggle('page-hidden', document.hidden);
+      document.documentElement.classList.toggle('hero-out-of-view', document.hidden
+        || document.getElementById('hero-showcase')?.getBoundingClientRect().bottom < 0);
+    });
+  });
+})();

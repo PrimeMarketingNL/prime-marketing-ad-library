@@ -5,78 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080636">
   <meta name="robots" content="noindex,nofollow">
-  <meta name="description" content="A creative portfolio design preview for Prime Marketing. Explore square and portrait sample ad designs.">
-  <title>Prime Marketing — Attention, by design.</title>
-  <link rel="icon" href="assets/brand/emblem.png" type="image/png">
-  <link rel="preload" href="assets/fonts/safiro-medium.woff2" as="font" type="font/woff2" crossorigin>
+  <meta name="description" content="Explore Prime Marketing's ad library. Campaign creative and whitepapers, with a dedicated portrait ad collection. Strategy, creativity, and performance.">
+  <title>The ad library — Prime Marketing</title>
+  <link rel="icon" href="assets/brand/emblem.webp" type="image/webp">
   <link rel="stylesheet" href="styles.css">
   <script src="js/creatives.js" defer></script>
   <script src="js/gallery.js" defer></script>
   <script src="js/format.js" defer></script>
+  <script src="js/carousel.js" defer></script>
   <script src="js/main.js" defer></script>
-  <noscript><style>.format-scene{height:auto}.format-sticky{position:relative;top:0;height:auto;padding-bottom:45px}.format-grid{padding-top:35px;padding-bottom:25px}.format-controls{display:none}.format-canvas{width:min(80%,360px)}.format-frame{height:100%}.format-readout,.format-gain{display:none}#format-art{opacity:1;visibility:visible}</style></noscript>
+  <noscript><style>.library-tools,.library-bottom,.motion-toggle,.carousel-controls{display:none}.format-scene{height:auto}.format-sticky{position:relative;top:0;height:auto;padding-bottom:45px}.format-grid{padding-top:35px;padding-bottom:25px}.format-controls{display:none}.format-canvas{width:min(80%,360px)}.format-frame{height:100%}.format-readout,.format-gain{display:none}#format-art{opacity:1;visibility:visible}</style></noscript>
 </head>
 <body>
-  <a class="skip-link" href="#work">Skip to selected work</a>
+  <a class="skip-link" href="#work">Skip to the ad library</a>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="Prime Marketing — back to top">
-      <img src="assets/brand/prime-white.png" width="1280" height="430" alt="Prime Marketing agency">
+      <img src="assets/brand/prime-white.webp" width="1280" height="430" alt="Prime Marketing agency">
     </a>
     <nav aria-label="Main navigation">
-      <a class="nav-link" href="#work">The work</a>
-      <a class="nav-link" href="#format">The format</a>
-      <a class="header-contact" href="#contact">Let’s talk <span aria-hidden="true">↗</span></a>
+      <a class="nav-link" href="#work">Ad library</a>
+      <a class="nav-link" href="#format">The 4:5 format</a>
+      <a class="button header-contact" href="https://primemarketing.nl/en/discover-in-30-minutes-if-your-advertisements-can-deliver-better-results/">Let's talk</a>
     </nav>
-    <div class="reading-progress" aria-hidden="true"><span id="reading-progress"></span></div>
   </header>
 
   <main id="top">
     <section class="hero gradient-field" aria-labelledby="hero-heading">
-      <div class="hero-topline"><p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Prime Marketing / Ad creative</p><span class="preview-pill">Design preview</span></div>
       <div class="hero-grid">
         <div class="hero-copy">
-          <p class="hero-kicker">Good ideas deserve to be seen.</p>
-          <h1 id="hero-heading">Attention,<br>by <span class="headline-accent">design.</span></h1>
-          <p class="hero-description">Ad creative with a clear idea.<br>A distinctive look. A reason to pause.</p>
-          <a class="button button-orange" href="#work">Explore the work <span aria-hidden="true">↓</span></a>
+          <p class="eyebrow hero-kicker">Prime Marketing · The creative collection</p>
+          <h1 id="hero-heading">The Prime<br><span class="headline-accent">ad library.</span></h1>
+          <p class="hero-description">A closer look at the creative behind our clients' campaigns. Built by Prime, for brands with ambition.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#work">Explore the library</a>
+            <a class="text-link" href="https://primemarketing.nl/en/">Meet the agency <span aria-hidden="true">↗</span></a>
+          </div>
+          <p class="hero-specialism">Strategy. Creativity. Performance.<br><span>For LinkedIn &amp; Google Ads.</span></p>
         </div>
-        <div class="hero-artwork" aria-label="A selection of sample ad designs">
-          <a class="hero-feature hero-study" href="assets/creatives/noise.svg" data-creative="noise" aria-label="View The bold approach — square sample creative">
-            <img src="assets/creatives/noise.svg" width="600" height="600" alt="Orange sample ad with Make some noise typography and a chrome ring." fetchpriority="high">
-            <span class="hero-study-label">01 / Sample creative <span aria-hidden="true">↗</span></span>
-          </a>
-          <a class="hero-support hero-study" href="assets/creatives/flow.svg" data-creative="flow" aria-label="View Complex, made clear — square sample creative">
-            <img src="assets/creatives/flow.svg" width="600" height="600" alt="Pale blue sample ad with Less admin. More ambition. typography.">
-          </a>
-          <a class="hero-support hero-study" href="assets/creatives/different.svg" data-creative="different" aria-label="View A different angle — square sample creative">
-            <img src="assets/creatives/different.svg" width="600" height="600" alt="Blue sample ad with Different. By default. typography.">
-          </a>
-          <p class="hero-artwork-note">Ideas, in full colour. <span>Click to take a closer look.</span></p>
+        <div class="hero-showcase" id="hero-showcase" aria-label="A scrolling selection from our ad library">
+          <div class="hero-columns" id="hero-columns"></div>
+          <noscript><div class="hero-static"><img src="assets/library/parkbee-1-012026.webp" width="600" height="600" alt="ParkBee campaign creative"><img src="assets/library/variolytics-8-090826.webp" width="600" height="600" alt="Variolytics campaign creative"><img src="assets/library/protime-5-061226.webp" width="600" height="600" alt="Protime campaign creative"></div></noscript>
+          <div class="showcase-caption"><span>Real brands. Real creative.</span><button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false"><span class="motion-icon" aria-hidden="true">Ⅱ</span><span class="motion-label">Pause animation</span></button></div>
         </div>
       </div>
-      <div class="hero-bottom"><p>Strategy <span aria-hidden="true">/</span> Creative <span aria-hidden="true">/</span> Paid media</p><a href="#work">A closer look, below <span aria-hidden="true">↓</span></a></div>
     </section>
 
     <section class="work-section" id="work" aria-labelledby="work-heading">
-      <div class="section-topline reveal"><p class="eyebrow"><span class="section-index">01</span> Selected work</p><p class="collection-note">Creative studies / <span data-square-count>05</span> square</p></div>
       <div class="work-heading reveal">
-        <h2 id="work-heading">Different ideas.<br><span class="muted-heading">Same attention to detail.</span></h2>
-        <p>From a bold brand statement to a product’s smallest detail. A few ways to make an impression.</p>
+        <div><p class="eyebrow">Made by Prime</p><h2 id="work-heading">A collection.<br><span class="muted-heading">Always in the making.</span></h2></div>
+        <p>Different brands, different challenges. Explore the ideas we've brought to life, one campaign at a time.</p>
       </div>
-      <div class="work-grid" id="square-grid">
-        <article class="work-card feature reveal"><a class="creative-link" data-creative="noise" href="assets/creatives/noise.svg"><img src="assets/creatives/noise.svg" width="600" height="600" alt="Orange sample ad with Make some noise typography and a chrome ring." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>The bold approach.</h3><p>Brand-led creative</p></div><span class="creative-ratio">1:1</span></div></article>
-        <article class="work-card secondary reveal"><a class="creative-link" data-creative="flow" href="assets/creatives/flow.svg"><img src="assets/creatives/flow.svg" width="600" height="600" alt="Pale blue sample ad with Less admin. More ambition. typography." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>Complex, made clear.</h3><p>Product-led creative</p></div><span class="creative-ratio">1:1</span></div></article>
-        <article class="work-card reveal"><a class="creative-link" data-creative="different" href="assets/creatives/different.svg"><img src="assets/creatives/different.svg" width="600" height="600" alt="Blue sample ad with Different. By default. typography." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>A different angle.</h3><p>Brand-led creative</p></div><span class="creative-ratio">1:1</span></div></article>
-        <article class="work-card reveal"><a class="creative-link" data-creative="clear" href="assets/creatives/clear.svg"><img src="assets/creatives/clear.svg" width="600" height="600" alt="Dark blue sample ad with Turn complex into clear typography." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>Beautifully connected.</h3><p>Product-led creative</p></div><span class="creative-ratio">1:1</span></div></article>
-        <article class="work-card reveal"><a class="creative-link" data-creative="quiet" href="assets/creatives/quiet.svg"><img src="assets/creatives/quiet.svg" width="600" height="600" alt="Neutral sample ad with Good things. No extra noise. typography." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>Less, but considered.</h3><p>Brand-led creative</p></div><span class="creative-ratio">1:1</span></div></article>
+      <div class="library-tools">
+        <div class="library-filters" role="group" aria-label="Filter the ad library">
+          <button type="button" data-library-filter="all" aria-pressed="true">All creatives <span data-filter-count="all"></span></button>
+          <button type="button" data-library-filter="resources" aria-pressed="false">Whitepapers</button>
+        </div>
+        <div class="library-search"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><label class="sr-only" for="library-search">Search the library by brand or creative</label><input id="library-search" type="search" placeholder="Find a brand or an idea" autocomplete="off"></div>
       </div>
-      <div class="work-outro reveal"><p>A strong idea can take more than one shape.</p><a href="#format">Let’s give it more room <span aria-hidden="true">↓</span></a></div>
+      <p class="library-status" id="library-status" role="status" aria-live="polite" aria-atomic="true">A selection from our collection.</p>
+      <div class="work-grid" id="square-grid"></div>
+      <noscript><div class="work-grid fallback-grid"><article class="work-card"><img src="assets/library/parkbee-1-012026.webp" width="600" height="600" alt="ParkBee campaign creative" loading="lazy"><div class="work-caption"><h3>ParkBee</h3><p>Single-image creative</p></div></article><article class="work-card"><img src="assets/library/variolytics-8-090826.webp" width="600" height="600" alt="Variolytics campaign creative" loading="lazy"><div class="work-caption"><h3>Variolytics</h3><p>Single-image creative</p></div></article><article class="work-card"><img src="assets/library/protime-5-061226.webp" width="600" height="600" alt="Protime campaign creative" loading="lazy"><div class="work-caption"><h3>Protime</h3><p>Single-image creative</p></div></article><article class="work-card"><img src="assets/library/acorel-1.webp" width="600" height="600" alt="Acorel campaign creative" loading="lazy"><div class="work-caption"><h3>Acorel</h3><p>Single-image creative</p></div></article></div></noscript>
+      <div class="library-empty" id="library-empty" hidden><h3>A fresh search?</h3><p>Try another brand or explore the full collection.</p><button type="button" class="text-link" id="library-reset">Show all creatives <span aria-hidden="true">↗</span></button></div>
+      <div class="library-bottom"><p id="library-showing"></p><button class="button button-blue" type="button" id="library-more">More from the library <span class="button-arrow" aria-hidden="true">↓</span></button><a class="text-link" href="#format">Discover the 4:5 format <span aria-hidden="true">↘</span></a></div>
     </section>
 
     <section class="format-section" id="format" aria-labelledby="format-heading">
       <div class="format-scene" id="format-scene">
         <div class="format-sticky" id="format-sticky">
-          <div class="format-topline"><p class="eyebrow"><span class="section-index">02</span> A different perspective</p><span class="format-chip">1:1 <span aria-hidden="true">→</span> 4:5</span></div>
+          <div class="format-topline"><p class="eyebrow">A different perspective</p><span class="format-chip">1:1 <span aria-hidden="true">→</span> 4:5</span></div>
           <div class="format-grid">
             <div class="format-copy">
               <p class="format-kicker">The idea stays. The canvas grows.</p>
@@ -89,7 +85,7 @@
                 <div id="format-frame" class="format-frame" role="group" aria-label="Canvas format comparison">
                   <div class="format-readout" aria-hidden="true"><span id="format-label">1:1</span><span id="format-caption">The square canvas</span></div>
                   <div id="format-gain" class="format-gain" aria-hidden="true"><span>+25% more canvas</span><span aria-hidden="true">↓</span></div>
-                  <img id="format-art" src="assets/creatives/room.svg" width="600" height="750" alt="Blue portrait sample ad with More room. To make an impression. typography." loading="lazy" decoding="async" aria-hidden="true">
+                  <img id="format-art" src="assets/library/style-9-100526.webp" width="600" height="750" alt="Skalar portrait campaign creative" loading="lazy" decoding="async" aria-hidden="true">
                   <span class="frame-corner corner-tl" aria-hidden="true"></span><span class="frame-corner corner-tr" aria-hidden="true"></span><span class="frame-corner corner-bl" aria-hidden="true"></span><span class="frame-corner corner-br" aria-hidden="true"></span>
                 </div>
                 <span class="dimension-line" aria-hidden="true"></span>
@@ -103,30 +99,36 @@
         </div>
       </div>
       <div class="portrait-section" id="portrait-work">
-        <div class="portrait-heading reveal"><div><p class="eyebrow">A taller canvas. The same care.</p><h2>The 4:5 collection.</h2></div><p><span data-portrait-count>03</span> portrait studies.<br> Room for the whole idea.</p></div>
-        <div class="portrait-grid" id="portrait-grid">
-          <article class="work-card reveal"><a class="creative-link" data-creative="room" href="assets/creatives/room.svg"><img src="assets/creatives/room.svg" width="600" height="750" alt="Blue portrait sample ad with More room. To make an impression. typography." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>Room for the idea.</h3><p>Brand-led creative</p></div><span class="creative-ratio">4:5</span></div></article>
-          <article class="work-card reveal"><a class="creative-link" data-creative="forward" href="assets/creatives/forward.svg"><img src="assets/creatives/forward.svg" width="600" height="750" alt="Light blue portrait sample ad with A clearer way forward typography." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>The bigger overview.</h3><p>Product-led creative</p></div><span class="creative-ratio">4:5</span></div></article>
-          <article class="work-card reveal"><a class="creative-link" data-creative="bigger" href="assets/creatives/bigger.svg"><img src="assets/creatives/bigger.svg" width="600" height="750" alt="Orange portrait sample ad with Big ideas. Meet the bigger picture. typography." loading="lazy" decoding="async"><span class="sample-badge">Sample study</span><span class="open-cue">View creative <span aria-hidden="true">↗</span></span></a><div class="work-caption"><div><h3>A little more impact.</h3><p>Brand-led creative</p></div><span class="creative-ratio">4:5</span></div></article>
+        <div class="portrait-heading reveal"><div><p class="eyebrow">More room for a good idea</p><h2>The 4:5 collection.</h2></div><p>Creative that makes<br>the most of the feed.</p></div>
+        <div class="portrait-carousel" id="portrait-carousel" role="region" aria-roledescription="carousel" aria-label="The 4:5 ad collection">
+          <div class="portrait-viewport" id="portrait-viewport" tabindex="0" aria-label="Portrait ad collection; scroll horizontally to explore">
+            <div class="portrait-grid" id="portrait-grid"></div>
+          </div>
+          <div class="carousel-controls" aria-label="Portrait carousel controls">
+            <p><span data-carousel-count>11</span> creatives · 4:5</p>
+            <div class="carousel-navigation">
+              <button id="portrait-prev" class="carousel-button" type="button" aria-label="Previous portrait ad">←</button>
+              <button id="portrait-pause" class="carousel-button carousel-pause" type="button" aria-pressed="false"><span class="carousel-pause-icon" aria-hidden="true">Ⅱ</span><span class="carousel-pause-label">Pause carousel</span></button>
+              <button id="portrait-next" class="carousel-button" type="button" aria-label="Next portrait ad">→</button>
+            </div>
+          </div>
         </div>
-        <div class="portrait-footnote"><p>25% more canvas compares area at equal width.</p><a href="#contact">Your next creative <span aria-hidden="true">↗</span></a></div>
+        <noscript><div class="portrait-grid"><article class="work-card"><img src="assets/library/style-9-100526.webp" width="600" height="750" alt="Skalar portrait ad" loading="lazy"></article></div></noscript>
+        <div class="portrait-footnote"><p>25% more canvas compares area at equal width.</p><p>Scroll through the collection, at your own pace.</p></div>
       </div>
+    </section>
+
+    <section class="agency-section" aria-labelledby="agency-heading">
+      <div class="agency-intro reveal"><p class="eyebrow">The thinking behind the work</p><h2 id="agency-heading">Good creative.<br><span class="muted-heading">A bigger picture.</span></h2><p>Every ad is part of a plan. We connect strategy, creative, and paid media to help ambitious businesses grow.</p><a class="text-link" href="https://primemarketing.nl/en/the-prime-approach/">How we work <span aria-hidden="true">↗</span></a></div>
+      <div class="agency-principles reveal"><article><span class="principle-number">01</span><div><h3>Start with the right question.</h3><p>Who do we need to reach, and what matters to them? A clear strategy gives the creative its direction.</p></div></article><article><span class="principle-number">02</span><div><h3>Make the brand unmistakable.</h3><p>From the first line to the last frame. Copy and design that feel like your brand and speak to your audience.</p></div></article><article><span class="principle-number">03</span><div><h3>Keep making it better.</h3><p>Launch, learn, and refine. Campaign insights guide the next creative, so the work keeps moving forward.</p></div></article></div>
+      <div class="agency-proof reveal"><div><p class="eyebrow">Creative meets performance</p><p>See what the work<br>can lead to.</p></div><a href="https://primemarketing.nl/en/case-en/30-pipeline-growth-785-roi-within-2-months-for-compliance-wise/" class="proof-result"><strong>785<span>%</span></strong><p>ROI for ComplianceWise</p><span class="proof-context">Within 3 months · View the case ↗</span></a><a href="https://primemarketing.nl/en/case-en/6-cnc-machines-sold-for-style-via-linkedin-ads/" class="proof-result"><strong>6</strong><p>CNC machines sold for STYLE</p><span class="proof-context">Within 9 months · View the case ↗</span></a></div>
     </section>
   </main>
 
   <footer class="site-footer gradient-field" id="contact" aria-labelledby="contact-heading">
-    <div class="footer-topline reveal"><p class="eyebrow"><span class="section-index">03</span> Let’s make something worth seeing.</p><span class="footer-symbol" aria-hidden="true">✳</span></div>
-    <div class="footer-main reveal"><h2 id="contact-heading">Your next<br><span>standout ad.</span></h2><div class="footer-invitation"><p>Have a campaign in mind?<br>Let’s give it a distinctive look.</p><a class="button button-orange" href="mailto:info@primemarketing.nl?subject=Let%27s%20talk%20ad%20creative">Let’s talk <span aria-hidden="true">↗</span></a><a class="email-link" href="mailto:info@primemarketing.nl">info@primemarketing.nl</a></div></div>
-    <div class="footer-bottom"><a class="brand" href="#top" aria-label="Prime Marketing — back to top"><img src="assets/brand/prime-white.png" width="1280" height="430" alt="Prime Marketing agency" loading="lazy"></a><p>Strategy. Creative. Paid media.</p><a href="#top">Back to top <span aria-hidden="true">↑</span></a></div>
-    <p class="preview-note">Design preview. All displayed ads are sample creative studies.</p>
+    <div class="footer-main reveal"><div><p class="eyebrow">Your brand. Our next chapter.</p><h2 id="contact-heading">Let's make<br><span>an impression.</span></h2></div><div class="footer-invitation"><p>Looking for a partner who connects<br>creative ambition with business growth?</p><a class="button button-primary" href="https://primemarketing.nl/en/discover-in-30-minutes-if-your-advertisements-can-deliver-better-results/">Plan a strategy session</a><p class="session-note">30 minutes. A fresh perspective on your campaigns.</p><a class="email-link" href="mailto:info@primemarketing.nl">info@primemarketing.nl</a></div></div>
+    <div class="footer-bottom"><a class="brand" href="https://primemarketing.nl/en/" aria-label="Visit Prime Marketing"><img src="assets/brand/prime-white.webp" width="1280" height="430" alt="Prime Marketing agency" loading="lazy"></a><p>Strategy. Creativity. Performance.</p><a class="text-link" href="#top">Back to top <span aria-hidden="true">↑</span></a></div>
+    <div class="footer-meta"><p>© 2026 Prime Marketing · Utrecht, the Netherlands</p><p>A selection of our client work.</p></div>
   </footer>
-
-  <dialog id="creative-viewer" class="creative-viewer" aria-labelledby="viewer-title" aria-describedby="viewer-description">
-    <div class="viewer-shell">
-      <div class="viewer-top"><span class="eyebrow">Prime / A closer look</span><button id="viewer-close" class="icon-button" type="button" aria-label="Close creative viewer" autofocus>×</button></div>
-      <div class="viewer-main"><div class="viewer-media"><img id="viewer-image" alt=""></div><div class="viewer-detail"><span class="viewer-sample-label">Creative study</span><h2 id="viewer-title">A closer look.</h2><p id="viewer-description">Sample creative for this design preview.</p><dl><div><dt>Approach</dt><dd id="viewer-category"></dd></div><div><dt>Format</dt><dd id="viewer-format"></dd></div></dl><div id="viewer-thumbs" class="viewer-thumbs" role="group" aria-label="Choose a creative"></div></div></div>
-      <div class="viewer-bottom"><div class="viewer-navigation"><button id="viewer-prev" class="icon-button" type="button" aria-label="Previous creative">←</button><span id="viewer-counter" aria-live="polite" aria-atomic="true"></span><button id="viewer-next" class="icon-button" type="button" aria-label="Next creative">→</button></div><p class="viewer-keyhint">← → to explore · Esc to close</p><p>Original proportions.</p></div>
-    </div>
-  </dialog>
 </body>
 </html>

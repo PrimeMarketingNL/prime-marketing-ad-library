@@ -1,272 +1,176 @@
 (() => {
   'use strict';
-
   let initialized = false;
 
-  // Cards remain ordinary links to the artwork until the native viewer is ready.
-  window.initPrimeGallery = function initPrimeGallery() {
+  window.initPrimeGallery = () => {
     if (initialized) return true;
-
-    const creatives = Array.isArray(window.PRIME_CREATIVES)
-      ? window.PRIME_CREATIVES.filter((item) => item && item.id && item.src)
-      : [];
-    if (!creatives.length) return false;
-
-    const byId = new Map(creatives.map((item, index) => [item.id, index]));
-    const squares = creatives.filter((item) => item.format === '1:1');
-    const portraits = creatives.filter((item) => item.format === '4:5');
-
-    function renderGallery(id, items, featured) {
-      const grid = document.getElementById(id);
-      if (!grid) return;
-      const fragment = document.createDocumentFragment();
-
-      items.forEach((creative, index) => {
-        const card = document.createElement('article');
-        card.className = 'work-card reveal';
-        if (featured && index === 0) card.classList.add('feature');
-        if (featured && index === 1) card.classList.add('secondary');
-
-        const link = document.createElement('a');
-        link.className = 'creative-link';
-        link.href = creative.src;
-        link.dataset.creative = creative.id;
-        link.setAttribute('aria-label', `View ${creative.title || 'creative study'}`);
-
-        const image = document.createElement('img');
-        image.src = creative.src;
-        image.alt = creative.alt || creative.title || 'Creative study';
-        image.width = 600;
-        image.height = creative.format === '4:5' ? 750 : 600;
-        image.loading = 'lazy';
-        image.decoding = 'async';
-        link.append(image);
-
-        if (creative.sample) {
-          const badge = document.createElement('span');
-          badge.className = 'sample-badge';
-          badge.textContent = 'Sample study';
-          link.append(badge);
-        }
-        const openCue = document.createElement('span');
-        openCue.className = 'open-cue';
-        openCue.textContent = 'View creative ↗';
-        openCue.setAttribute('aria-hidden', 'true');
-        link.append(openCue);
-
-        const caption = document.createElement('div');
-        caption.className = 'work-caption';
-        const copy = document.createElement('div');
-        const title = document.createElement('h3');
-        title.textContent = creative.title || 'Creative study';
-        const category = document.createElement('p');
-        category.textContent = creative.categoryLabel || creative.category || 'Design study';
-        copy.append(title, category);
-        const ratio = document.createElement('span');
-        ratio.className = 'creative-ratio';
-        ratio.textContent = creative.format;
-        caption.append(copy, ratio);
-        card.append(link, caption);
-        fragment.append(card);
-      });
-
-      grid.replaceChildren(fragment);
-    }
-
-    renderGallery('square-grid', squares, true);
-    renderGallery('portrait-grid', portraits, false);
-    document.querySelectorAll('[data-square-count]').forEach((element) => {
-      element.textContent = String(squares.length).padStart(2, '0');
-    });
-    document.querySelectorAll('[data-portrait-count]').forEach((element) => {
-      element.textContent = String(portraits.length).padStart(2, '0');
-    });
-
-    const formatArt = document.getElementById('format-art');
-    const formatLink = document.getElementById('format-art-link');
-    const formatId = formatArt?.closest('[data-format-creative]')?.dataset.formatCreative
-      || formatLink?.dataset.formatCreative;
-    const formatCreative = byId.has(formatId) ? creatives[byId.get(formatId)] : portraits[0];
-    if (formatCreative) {
-      if (formatArt) {
-        formatArt.src = formatCreative.src;
-        formatArt.alt = formatCreative.alt || formatCreative.title || 'Portrait design study';
-      }
-      if (formatLink) {
-        formatLink.dataset.creative = formatCreative.id;
-        formatLink.href = formatCreative.src;
-        formatLink.setAttribute('aria-label', `View ${formatCreative.title || 'portrait design study'}`);
-      }
-    }
-
-    // Keep hero and other non-gallery links aligned with the same manifest.
-    document.querySelectorAll('[data-creative]').forEach((trigger) => {
-      const index = byId.get(trigger.dataset.creative);
-      if (index === undefined) return;
-      const creative = creatives[index];
-      if (trigger instanceof HTMLAnchorElement) trigger.href = creative.src;
-      const image = trigger.querySelector('img');
-      if (image) {
-        image.src = creative.src;
-        image.alt = creative.alt || creative.title || 'Creative study';
-      }
-    });
-
-    const viewer = document.getElementById('creative-viewer');
-    if (!viewer || typeof viewer.showModal !== 'function') return false;
-
-    const elements = {
-      image: document.getElementById('viewer-image'),
-      title: document.getElementById('viewer-title'),
-      description: document.getElementById('viewer-description'),
-      format: document.getElementById('viewer-format'),
-      category: document.getElementById('viewer-category'),
-      counter: document.getElementById('viewer-counter'),
-      thumbs: document.getElementById('viewer-thumbs'),
-      close: document.getElementById('viewer-close'),
-      previous: document.getElementById('viewer-prev'),
-      next: document.getElementById('viewer-next'),
-    };
-    if (Object.values(elements).some((element) => !element)) return false;
-
+    const creatives = (window.PRIME_CREATIVES || []).filter(item => item.id && item.src && item.type === 'image');
+    const libraryCreatives = creatives.filter(item => item.format === '1:1');
+    const grid = document.getElementById('square-grid');
+    if (!creatives.length || !grid) return false;
     initialized = true;
-    const thumbnails = [];
-    let currentIndex = 0;
-    let previousFocus = null;
-    let touchStart = null;
 
-    elements.counter.setAttribute('aria-live', 'polite');
-    elements.counter.setAttribute('aria-atomic', 'true');
-    elements.image.style.objectFit = 'contain';
-    elements.image.draggable = false;
+    const search = document.getElementById('library-search');
+    const more = document.getElementById('library-more');
+    const status = document.getElementById('library-status');
+    const showing = document.getElementById('library-showing');
+    const empty = document.getElementById('library-empty');
+    const filters = [...document.querySelectorAll('[data-library-filter]')];
+    const pageSize = 12;
+    let activeFilter = 'all';
+    let limit = pageSize;
+    let results = [];
+    const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
-    const fragment = document.createDocumentFragment();
-    creatives.forEach((creative, index) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'viewer-thumb';
-      button.setAttribute('aria-label', `View ${creative.title || 'sample creative'}`);
-      button.style.minWidth = '44px';
-      button.style.minHeight = '44px';
+    function makeCard(creative) {
+      const card = document.createElement('article');
+      card.className = 'work-card';
+      card.dataset.creativeId = creative.id;
+      const media = document.createElement('div');
+      media.className = 'creative-media';
+      media.style.setProperty('--creative-ratio', String(creative.width / creative.height));
 
       const image = document.createElement('img');
       image.src = creative.src;
-      image.alt = '';
+      if (creative.thumbnail && creative.thumbWidth < creative.width) {
+        image.srcset = creative.thumbnail + ' ' + creative.thumbWidth + 'w, ' + creative.src + ' ' + creative.width + 'w';
+        image.sizes = '(max-width: 700px) calc((100vw - 59px) / 2), (max-width: 840px) calc((100vw - 92px) / 3), calc((100vw - 10vw - 66px) / 4)';
+      }
+      image.alt = creative.alt || creative.client + ' campaign creative';
+      image.width = creative.width;
+      image.height = creative.height;
       image.loading = 'lazy';
       image.decoding = 'async';
-      image.draggable = false;
-      button.append(image);
-      button.addEventListener('click', () => showCreative(index));
-      thumbnails.push(button);
-      fragment.append(button);
-    });
-    elements.thumbs.replaceChildren(fragment);
+      media.append(image);
+      const caption = document.createElement('div');
+      caption.className = 'work-caption';
+      const copy = document.createElement('div');
+      const title = document.createElement('h3');
+      title.textContent = creative.client;
+      const category = document.createElement('p');
+      category.textContent = creative.categoryLabel;
+      copy.append(title, category);
+      const ratio = document.createElement('span');
+      ratio.className = 'creative-ratio';
+      ratio.textContent = creative.format;
+      caption.append(copy, ratio);
+      card.append(media, caption);
+      return card;
+    }
 
-    function showCreative(index) {
-      currentIndex = (index + creatives.length) % creatives.length;
-      const creative = creatives[currentIndex];
-      const formatName = creative.format === '4:5' ? 'Portrait' : 'Square';
+    const matchesFilter = creative => activeFilter === 'all'
+      || (activeFilter === 'resources' && creative.category === 'resources');
 
-      elements.image.src = creative.src;
-      elements.image.alt = creative.alt || `${creative.title || 'Sample creative'} design study`;
-      elements.title.textContent = creative.title || 'Design study';
-      const description = creative.description || (creative.sample ? 'An original layout exploration for this portfolio prototype.' : '');
-      elements.description.textContent = `${creative.sample ? 'Sample creative · Design study. ' : ''}${description}`;
-      elements.format.textContent = `${creative.format || '1:1'} · ${formatName}`;
-      elements.category.textContent = creative.categoryLabel || creative.category || 'Design study';
-      elements.counter.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(creatives.length).padStart(2, '0')}`;
-
-      thumbnails.forEach((thumbnail, thumbnailIndex) => {
-        thumbnail.setAttribute('aria-current', String(thumbnailIndex === currentIndex));
+    const update = (append = false) => {
+      const query = normalize(search?.value);
+      const terms = query.split(/\s+/).filter(Boolean);
+      results = libraryCreatives.filter(creative => {
+        const content = normalize([creative.client, creative.title, creative.categoryLabel, creative.format].join(' '));
+        return matchesFilter(creative) && terms.every(term => content.includes(term));
       });
+      if (!append) {
+        grid.replaceChildren();
+      }
+      const start = append ? grid.children.length : 0;
+      const fragment = document.createDocumentFragment();
+      results.slice(start, limit).forEach(creative => fragment.append(makeCard(creative)));
+      grid.append(fragment);
+      const count = Math.min(limit, results.length);
+      more.hidden = count >= results.length;
+      empty.hidden = results.length > 0;
+      status.textContent = results.length + (results.length === 1 ? ' creative' : ' creatives')
+        + (query ? ' matching “' + search.value.trim() + '”' : ' in ' + (activeFilter === 'all' ? 'the collection' : filters.find(button => button.dataset.libraryFilter === activeFilter).textContent.trim())) + '.';
+      showing.textContent = count ? 'Showing ' + count + ' of ' + results.length : '';
+      filters.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.libraryFilter === activeFilter)));
+      window.dispatchEvent(new Event('prime:layout'));
+      if (append && grid.children[start]) {
+        grid.children[start].tabIndex = -1;
+        grid.children[start].focus({ preventScroll: true });
+      }
+    };
+
+    const setFilter = filter => {
+      activeFilter = filter;
+      limit = pageSize;
+      update();
+    };
+    filters.forEach(button => button.addEventListener('click', () => setFilter(button.dataset.libraryFilter)));
+    search?.addEventListener('input', () => {
+      limit = pageSize;
+      update();
+    });
+    more?.addEventListener('click', () => {
+      limit += pageSize;
+      update(true);
+    });
+    document.getElementById('library-reset')?.addEventListener('click', () => {
+      search.value = '';
+      setFilter('all');
+      search.focus({ preventScroll: true });
+    });
+    document.querySelector('[data-filter-count="all"]').textContent = libraryCreatives.length;
+    update();
+
+    const portraits = creatives.filter(item => item.format === '4:5');
+    const portraitPicks = ['style-9-100526', 'trace-1-101026', '10-usppainpoint-ads'].map(id => portraits.find(item => item.id === id)).filter(Boolean);
+    portraits.forEach(item => {
+      if (!portraitPicks.includes(item)) portraitPicks.push(item);
+    });
+    const portraitGrid = document.getElementById('portrait-grid');
+    portraitGrid?.replaceChildren(...portraitPicks.map(makeCard));
+    // Preserve readable, uncropped artwork in the dedicated portrait carousel.
+    portraitGrid?.querySelectorAll('img').forEach(image => {
+      image.sizes = '(max-width: 700px) 80vw, (max-width: 840px) 42vw, 30vw';
+    });
+    document.querySelectorAll('[data-carousel-count]').forEach(element => { element.textContent = portraits.length; });
+    const formatCreative = portraitPicks[0];
+    const formatArt = document.getElementById('format-art');
+    if (formatArt && formatCreative) {
+      formatArt.src = formatCreative.src;
+      formatArt.alt = formatCreative.alt;
+      formatArt.width = formatCreative.width;
+      formatArt.height = formatCreative.height;
     }
 
-    function openCreative(index, trigger) {
-      if (viewer.open) {
-        showCreative(index);
-        return true;
-      }
-
-      showCreative(index);
-      // If a browser refuses the dialog, leave the original asset link usable.
-      try {
-        viewer.showModal();
-      } catch {
-        return false;
-      }
-      previousFocus = trigger || document.activeElement;
-      document.body.classList.add('viewer-open');
-      elements.close.focus({ preventScroll: true });
-      const scrollArea = viewer.querySelector('.viewer-main');
-      if (scrollArea) scrollArea.scrollTop = 0;
-      return true;
+    const hero = document.getElementById('hero-columns');
+    if (hero) {
+      const preferred = ['ParkBee', 'Variolytics', 'Protime', 'Acorel', 'Skalar', 'Cuchilla Connect', 'Adaptics', 'FyxCapital', 'Gerstel', 'Trace', 'Harper James', 'BIS | Econocom', 'Capability', 'Bloqhouse', 'Rotaris'];
+      const heroPicks = preferred.map(client => libraryCreatives.find(item => item.client === client && item.category !== 'resources')).filter(Boolean);
+      libraryCreatives.forEach(item => {
+        if (heroPicks.length < 15 && !heroPicks.includes(item)) heroPicks.push(item);
+      });
+      const columns = Array.from({ length: 3 }, () => []);
+      heroPicks.slice(0, 15).forEach((item, index) => columns[index % 3].push(item));
+      const fragment = document.createDocumentFragment();
+      columns.forEach((items, columnIndex) => {
+        const column = document.createElement('div');
+        column.className = 'hero-column';
+        const track = document.createElement('div');
+        track.className = 'hero-column-track';
+        for (let copy = 0; copy < 2; copy++) {
+          const group = document.createElement('div');
+          group.className = 'hero-column-group';
+          if (copy) group.setAttribute('aria-hidden', 'true');
+          items.forEach((item, index) => {
+            const tile = document.createElement('div');
+            tile.className = 'hero-tile';
+            const image = document.createElement('img');
+            image.src = item.thumbnail || item.src;
+            image.alt = copy ? '' : item.alt;
+            image.width = item.thumbWidth || item.width;
+            image.height = Math.round(image.width * item.height / item.width);
+            image.decoding = 'async';
+            if (!copy && index === 0 && columnIndex !== 1) image.fetchPriority = 'high';
+            tile.append(image);
+            group.append(tile);
+          });
+          track.append(group);
+        }
+        column.append(track);
+        fragment.append(column);
+      });
+      hero.replaceChildren(fragment);
     }
-
-    document.querySelectorAll('[data-creative]').forEach((trigger) => {
-      if (!byId.has(trigger.dataset.creative)) return;
-      trigger.setAttribute('aria-haspopup', 'dialog');
-      trigger.setAttribute('aria-controls', 'creative-viewer');
-    });
-
-    document.addEventListener('click', (event) => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const trigger = event.target instanceof Element ? event.target.closest('[data-creative]') : null;
-      if (!trigger || viewer.contains(trigger)) return;
-      const index = byId.get(trigger.dataset.creative);
-      if (index === undefined) return;
-      if (openCreative(index, trigger)) event.preventDefault();
-    });
-
-    elements.close.addEventListener('click', () => viewer.close());
-    elements.previous.addEventListener('click', () => showCreative(currentIndex - 1));
-    elements.next.addEventListener('click', () => showCreative(currentIndex + 1));
-
-    viewer.addEventListener('close', () => {
-      document.body.classList.remove('viewer-open');
-      touchStart = null;
-      const focusTarget = previousFocus;
-      previousFocus = null;
-      if (focusTarget instanceof HTMLElement && focusTarget.isConnected) {
-        focusTarget.focus({ preventScroll: true });
-      }
-    });
-
-    // Escape uses the dialog's native cancel/close behavior and focus trap.
-    viewer.addEventListener('keydown', (event) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) return;
-      const target = event.target;
-      if (target instanceof Element && target.matches('input, textarea, select, [contenteditable="true"]')) return;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-        event.preventDefault();
-        showCreative(currentIndex + (event.key === 'ArrowLeft' ? -1 : 1));
-      }
-    });
-
-    viewer.addEventListener('click', (event) => {
-      if (event.target === viewer) viewer.close();
-    });
-
-    const media = elements.image.closest('[data-viewer-media], .viewer-media') || elements.image.parentElement;
-    media.addEventListener('touchstart', (event) => {
-      touchStart = event.touches.length === 1
-        ? { x: event.touches[0].clientX, y: event.touches[0].clientY, id: event.touches[0].identifier }
-        : null;
-    }, { passive: true });
-
-    media.addEventListener('touchend', (event) => {
-      const start = touchStart;
-      touchStart = null;
-      if (!start || !viewer.open) return;
-      const touch = Array.from(event.changedTouches).find((item) => item.identifier === start.id);
-      if (!touch) return;
-      const dx = touch.clientX - start.x;
-      const dy = touch.clientY - start.y;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-        showCreative(currentIndex + (dx < 0 ? 1 : -1));
-      }
-    }, { passive: true });
-
-    media.addEventListener('touchcancel', () => { touchStart = null; }, { passive: true });
     return true;
   };
 })();
