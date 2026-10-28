@@ -1,6 +1,36 @@
 # Prime Marketing ad library
 
-Open `index.html` in a browser. This is a buildless static site: no installation, framework, or build step is needed. Keep `assets/`, `js/`, and `styles.css` alongside the HTML file.
+Open `index.html` in a browser for local development. The site needs no framework or dependencies. Keep `assets/`, `js/`, and `styles.css` alongside the HTML file. For hosting, the build below prepares a separate public directory.
+
+## Cloudflare Pages
+
+Connect this Git repository in Cloudflare's **Workers & Pages → Create application → Pages → Connect to Git** flow. Use these build settings:
+
+| Setting | Value |
+| --- | --- |
+| Production branch | `main` |
+| Framework preset | None |
+| Root directory | Leave blank (repository root) |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+
+The build uses Node.js 22 or newer and requires no packages. `.node-version` selects Node.js 22 for Cloudflare's build environment. `wrangler.jsonc` also sets the Pages output directory to `dist`. If you choose a different Pages project name, update `name` in that file to match.
+
+To prepare the same deployment locally:
+
+```sh
+npm run build
+```
+
+Deploy **only `dist/`**, never the repository root. `scripts/build.mjs` recreates that directory from an explicit list of public HTML, CSS, and JavaScript files, and copies only the assets referenced by those files. New catalog images and thumbnails are included automatically. Add new browser scripts or stylesheets to the build's `entries` list. Keep local asset references as quoted `assets/...` paths, as in the existing code; computed paths need explicit build support.
+
+The homepage is `index.html`. Its optimized images, webfonts, styles, and JavaScript remain accessible because browsers need them to display the page. Files in `library/`, `brand guide/`, `Fonts/`, `Logo/`, `old prototype/`, `.preview/`, Git metadata, asset manifests, and unused assets are not copied or deployed. The output includes a small `404.html` so requests for missing files return a real 404 instead of Cloudflare's default homepage fallback.
+
+The existing `noindex,nofollow` meta directive is retained, and `_headers` applies it to all deployed files. These directives ask search engines not to index content; they do not make the website private. Keep the Git repository private if its original files should remain private on GitHub or GitLab. For a login-protected website, configure Cloudflare Access separately.
+
+Cloudflare automatically builds and deploys subsequent pushes to the connected branch. The generated `dist/` is ignored by Git.
+
+Cloudflare documentation: [Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/), [serving pages and 404 behavior](https://developers.cloudflare.com/pages/configuration/serving-pages/).
 
 The page presents real artwork from `library/Ad library 2026/` as a browsable collection, with brand search, two collection filters (All creatives and Whitepapers), and progressive loading. Ad cards are intentionally non-clickable. The hero shows three continuously scrolling columns with alternating directions, using square static artwork. The existing scroll-driven 1:1-to-4:5 comparison is retained, including its short-screen and reduced-motion fallbacks.
 
@@ -20,7 +50,7 @@ The page uses Prime's existing Safiro and Stabil Grotesk webfonts, logo, and pal
 
 Pause animation stops the hero columns and portrait carousel and switches the ambient gradient to its static equivalent. The page respects the device's reduced-motion setting. The carousel also pauses while hovered, focused, manually scrolled, outside the viewport, or in a hidden tab; its own pause control works independently. Hero scrolling pauses outside the viewport.
 
-Agency outcome figures link directly to their supporting Prime case studies. The strategy-session buttons link to Prime's existing intake page. This checkout remains a local design preview; the existing `noindex,nofollow` directive is retained.
+Agency outcome figures link directly to their supporting Prime case studies. The strategy-session buttons link to Prime's existing intake page. The existing `noindex,nofollow` directive is retained when publishing.
 
 ## Verification
 
