@@ -50,10 +50,13 @@
       const category = document.createElement('p');
       category.textContent = creative.categoryLabel;
       copy.append(title, category);
-      const ratio = document.createElement('span');
-      ratio.className = 'creative-ratio';
-      ratio.textContent = creative.format;
-      caption.append(copy, ratio);
+      caption.append(copy);
+      if (creative.format !== '1:1') {
+        const ratio = document.createElement('span');
+        ratio.className = 'creative-ratio';
+        ratio.textContent = creative.format;
+        caption.append(ratio);
+      }
       card.append(media, caption);
       return card;
     }
@@ -122,7 +125,6 @@
     portraitGrid?.querySelectorAll('img').forEach(image => {
       image.sizes = '(max-width: 700px) 80vw, (max-width: 840px) 42vw, 30vw';
     });
-    document.querySelectorAll('[data-carousel-count]').forEach(element => { element.textContent = portraits.length; });
     const formatCreative = portraitPicks[0];
     const formatArt = document.getElementById('format-art');
     if (formatArt && formatCreative) {

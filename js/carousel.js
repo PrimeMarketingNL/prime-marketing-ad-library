@@ -12,13 +12,10 @@
     initialized = true;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const pause = document.getElementById('portrait-pause');
     const previous = document.getElementById('portrait-prev');
     const next = document.getElementById('portrait-next');
     const speed = 24; // Pixels per second: enough time to read each creative.
     let period = 0;
-    let userPaused = false;
-    let hovering = false;
     let focused = carousel.contains(document.activeElement);
     let pointerDown = false;
     let inView = false;
@@ -36,9 +33,6 @@
       card.setAttribute('role', 'group');
       card.setAttribute('aria-roledescription', 'slide');
       card.setAttribute('aria-label', (index + 1) + ' of ' + originals.length);
-    });
-    carousel.querySelectorAll('[data-carousel-count]').forEach(label => {
-      label.textContent = originals.length;
     });
 
     const makeClones = () => originals.map(card => {
@@ -62,7 +56,7 @@
       || document.documentElement.classList.contains('motion-paused')
       || Boolean(window.PrimeMotion?.isPaused());
     const canFlow = () => period > 0 && inView && !document.hidden && !motionPaused()
-      && !userPaused && !hovering && !focused && !pointerDown
+      && !focused && !pointerDown
       && performance.now() >= manualUntil;
 
     // Three identical sets allow wrapping either direction without a visible jump.
@@ -114,14 +108,6 @@
       manualTimer = setTimeout(sync, 4050);
       sync();
     };
-    const updatePause = () => {
-      if (!pause) return;
-      pause.setAttribute('aria-pressed', String(userPaused));
-      const label = pause.querySelector('.carousel-pause-label');
-      const icon = pause.querySelector('.carousel-pause-icon');
-      if (label) label.textContent = userPaused ? 'Resume carousel' : 'Pause carousel';
-      if (icon) icon.textContent = userPaused ? '\u25b6' : '\u2161';
-    };
 
     function measure() {
       const oldPeriod = period;
@@ -156,11 +142,6 @@
 
     previous?.addEventListener('click', () => move(-1));
     next?.addEventListener('click', () => move(1));
-    pause?.addEventListener('click', () => {
-      userPaused = !userPaused;
-      updatePause();
-      sync();
-    });
     viewport.addEventListener('scroll', () => {
       const left = viewport.scrollLeft;
       if (period && (left < period - 1 || left >= period * 2 + 1)) setPosition(left);
@@ -178,16 +159,6 @@
     };
     window.addEventListener('pointerup', releasePointer, { passive: true });
     window.addEventListener('pointercancel', releasePointer, { passive: true });
-    carousel.addEventListener('pointerenter', event => {
-      if (event.pointerType !== 'mouse') return;
-      hovering = true;
-      sync();
-    });
-    carousel.addEventListener('pointerleave', event => {
-      if (event.pointerType !== 'mouse') return;
-      hovering = false;
-      sync();
-    });
     carousel.addEventListener('focusin', () => {
       focused = true;
       sync();
@@ -235,7 +206,6 @@
     } else {
       window.addEventListener('resize', measure);
     }
-    updatePause();
     measure();
     return true;
   };

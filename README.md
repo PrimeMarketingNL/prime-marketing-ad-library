@@ -42,13 +42,15 @@ The page presents real artwork from `library/Ad library 2026/` as a browsable co
 
 All 52 supplied media files are converted: 49 WebP images and 3 WebM animations. Primary media totals 5.43 MB, down from 82.25 MB (93.4% smaller); every thumbnail and poster brings generated media to 6.39 MB. The page displays 47 static creatives: 36 square ads in the main library and all 11 portrait ads in the dedicated 4:5 collection. The animated ads and the Nance and Woonstaete artwork containing placeholder copy are excluded from the page.
 
-The format demonstration uses real portrait artwork. The 4:5 collection is a continuously flowing carousel of all 11 portrait creatives, with horizontal swipe/scroll, previous/next buttons, and a pause control. Duplicate slides make the loop seamless and are hidden from accessibility tools. The no-JavaScript version provides a static selection and a fully expanded format example.
+The format demonstration uses real portrait artwork. The 4:5 collection is a continuously flowing carousel of all 11 portrait creatives, with horizontal swipe/scroll and previous/next buttons. Duplicate slides make the loop seamless and are hidden from accessibility tools. The no-JavaScript version provides a static selection and a fully expanded format example.
 
 ## Brand and motion
 
 The page uses Prime's existing Safiro and Stabil Grotesk webfonts, logo, and palette. The animated gradient and grain treatment are reproduced from `primemarketing.nl`; the gradient contains the same four radial fields on 50-second motion paths. Blue, 4px-radius buttons use the orange lightning mark from the live site's visual language.
 
-Pause animation stops the hero columns and portrait carousel and switches the ambient gradient to its static equivalent. The page respects the device's reduced-motion setting. The carousel also pauses while hovered, focused, manually scrolled, outside the viewport, or in a hidden tab; its own pause control works independently. Hero scrolling pauses outside the viewport.
+The page respects the device's reduced-motion setting, which stops the hero columns and portrait carousel and switches the ambient gradient to its static equivalent. The carousel keeps moving on mouse hover and pauses while focused, manually scrolled, outside the viewport, or in a hidden tab. Hero scrolling pauses on hover and outside the viewport. There are no visible pause controls.
+
+The hero and agency section use the animated gradient. The ad library, portrait carousel, and footer use the light background, with the full-color Prime logo in the footer.
 
 Agency outcome figures link directly to their supporting Prime case studies. The strategy-session buttons link to Prime's existing intake page. The existing `noindex,nofollow` directive is retained when publishing.
 

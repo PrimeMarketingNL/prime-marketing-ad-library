@@ -2,28 +2,15 @@
 
 (() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let userPaused = false;
-  const buttonState = () => {
-    const paused = userPaused || reduced.matches;
-    document.documentElement.classList.toggle('motion-paused', paused);
-    const button = document.getElementById('motion-toggle');
-    if (button) {
-      button.setAttribute('aria-pressed', String(paused));
-      button.disabled = reduced.matches;
-      button.querySelector('.motion-label').textContent = reduced.matches ? 'Animation off' : paused ? 'Resume animation' : 'Pause animation';
-      button.querySelector('.motion-icon').textContent = paused ? '▶' : 'Ⅱ';
-    }
+  const syncMotion = () => {
+    document.documentElement.classList.toggle('motion-paused', reduced.matches);
     window.dispatchEvent(new Event('prime:motion'));
   };
-  window.PrimeMotion = { isPaused: () => userPaused || reduced.matches || document.hidden };
-  reduced.addEventListener('change', buttonState);
+  window.PrimeMotion = { isPaused: () => reduced.matches || document.hidden };
+  reduced.addEventListener('change', syncMotion);
 
   document.addEventListener('DOMContentLoaded', () => {
-    buttonState();
-    document.getElementById('motion-toggle')?.addEventListener('click', () => {
-      userPaused = !userPaused;
-      buttonState();
-    });
+    syncMotion();
     window.initPrimeGallery?.();
     window.initPrimeFormat?.();
     window.initPrimeCarousel?.();
